@@ -3,17 +3,32 @@ import {JavaScriptLexer} from "../lexer/JavaScriptLexer";
 import {TokenType} from "../lexer/TokenType";
 import type {
     ArrayExpression,
-    BlockStatement, CallExpression,
+    BlockStatement,
+    CallExpression,
     ClassBody,
     ClassDeclaration,
-    Expression, ExpressionStatement, ForStatement,
+    Expression,
+    ExpressionStatement,
+    ForStatement,
     FunctionDeclaration,
-    FunctionExpression, Identifier, IfStatement, Literal, MemberExpression, MethodDefinition, NewExpression,
-    ObjectExpression, Pattern,
-    Program, Property, ReturnStatement,
-    Statement, TemplateElement, TemplateLiteral,
+    FunctionExpression,
+    Identifier,
+    IfStatement,
+    Literal,
+    MemberExpression,
+    MethodDefinition,
+    NewExpression,
+    ObjectExpression,
+    Pattern,
+    Program,
+    Property,
+    ReturnStatement,
+    Statement,
+    TemplateElement,
+    TemplateLiteral,
     VariableDeclaration,
-    VariableDeclarator, WhileStatement
+    VariableDeclarator,
+    WhileStatement
 } from "./ASTNode";
 
 export class JavaScriptParser {
@@ -658,8 +673,6 @@ export class JavaScriptParser {
                 expression = this.parseMemberExpression(expression, true);
             } else if (this.match(TokenType.PUNCTUATION) && this.previous().value === '.') {
                 expression = this.parseMemberExpression(expression, false);
-            } else if (this.matchKeyword('new')) {
-                expression = this.parseNewExpression(expression);
             } else {
                 break;
             }
@@ -708,28 +721,42 @@ export class JavaScriptParser {
         };
     }
 
-    private parseNewExpression(callee: Expression): NewExpression {
-        this.consume(TokenType.PUNCTUATION, "Expected '(' after new expression");
+    private parseNewExpression(): NewExpression {
+        const start = this.previous();
+        let callee = this.parsePrimary();
 
-        const args: Expression[] = [];
-        if (!this.check(TokenType.PUNCTUATION) || this.peek().value !== ')') {
-            do {
-                args.push(this.parseExpression());
-            } while (this.match(TokenType.PUNCTUATION) && this.previous().value === ',');
+        while (this.match(TokenType.PUNCTUATION) && (this.previous().value === '[' || this.previous().value === '.')) {
+            if (this.previous().value === '[') {
+                callee = this.parseMemberExpression(callee, true);
+            } else { // '.'
+                callee = this.parseMemberExpression(callee, false);
+            }
         }
 
-        this.consume(TokenType.PUNCTUATION, "Expected ')' after new arguments");
+        const args: Expression[] = [];
+        if (this.match(TokenType.PUNCTUATION) && this.previous().value === '(') {
+            if (!this.check(TokenType.PUNCTUATION) || this.peek().value !== ')') {
+                do {
+                    args.push(this.parseExpression());
+                } while (this.match(TokenType.PUNCTUATION) && this.previous().value === ',');
+            }
+            this.consume(TokenType.PUNCTUATION, "Expected ')' after new arguments");
+        }
 
         return {
             type: 'NewExpression',
             callee,
             arguments: args,
-            start: callee.start,
+            start: start.column - 3,
             end: this.previous().column
         };
     }
 
     private parsePrimary(): Expression {
+        if (this.matchKeyword('new')) {
+            return this.parseNewExpression();
+        }
+
         if (this.matchKeyword('this')) {
             return {
                 type: 'ThisExpression',
