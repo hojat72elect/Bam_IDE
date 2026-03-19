@@ -2,39 +2,39 @@
  * A LIFO data structure. It's easy to implement and reason about.
  */
 export class Stack {
-    private dataHolder: any[];
+    private _dataHolder: any[];
 
     constructor(data: any[] = []) {
-        this.dataHolder = data;
+        this._dataHolder = data;
     }
 
     push(newValue: any) {
-        this.dataHolder.push(newValue);
+        this._dataHolder.push(newValue);
     }
 
     peek() {
         if (this.isEmpty()) return undefined;
-        return this.dataHolder[this.dataHolder.length - 1];
+        return this._dataHolder[this._dataHolder.length - 1];
     }
 
     pop() {
         if (this.isEmpty()) return undefined;
-        return this.dataHolder.pop();
+        return this._dataHolder.pop();
     }
 
     clear() {
-        this.dataHolder = [];
+        this._dataHolder = [];
     }
 
     getSize() {
-        return this.dataHolder.length;
+        return this._dataHolder.length;
     }
 
     isEmpty() {
-        return this.dataHolder.length === 0;
+        return this._dataHolder.length === 0;
     }
 
     toString() {
-        return this.dataHolder.join(", ");
+        return this._dataHolder.join(" -> ");
     }
 }
