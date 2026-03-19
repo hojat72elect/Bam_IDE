@@ -1,3 +1,6 @@
+/**
+ * just a 2D vector which can be used for mathematical calculations.
+ */
 export class Vector2{
 
     x: number;
@@ -13,6 +16,9 @@ export class Vector2{
         this.y = 0;
     }
 
+    /**
+     * This is a deep copy; which means the new vector will be saved in a different address in the memory.
+     */
     copy() {
         return new Vector2(this.x, this.y);
     }
@@ -51,6 +57,9 @@ export class Vector2{
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
+    /**
+     * The length of a normalized vector is 1.
+     */
     normalize() {
         const length = this.getLength();
         this.x /= length;
