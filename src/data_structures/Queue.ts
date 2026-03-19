@@ -5,8 +5,8 @@ export class Queue {
 
     private _dataHolder: any[];
 
-    constructor() {
-        this._dataHolder = [];
+    constructor(data: any[] = []) {
+        this._dataHolder = data;
     }
 
     isEmpty() {
@@ -43,7 +43,7 @@ export class Queue {
      * @returns A string representation of the Queue (for debugging purposes).
      */
     toString(): string {
-        return this._dataHolder.join("-->");
+        return this._dataHolder.join(" <-- ");
     }
 
     clear() {
