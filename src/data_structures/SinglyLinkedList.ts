@@ -12,14 +12,14 @@ class Node<T> {
 }
 
 export class SinglyLinkedList<T> {
-    private headNode: Node<T> | null;
-    private tailNode: Node<T> | null;
-    private size: number;
+    private _headNode: Node<T> | null;
+    private _tailNode: Node<T> | null;
+    private _size: number;
 
     constructor(data: T[] = []) {
-        this.headNode = null;
-        this.tailNode = null;
-        this.size = 0;
+        this._headNode = null;
+        this._tailNode = null;
+        this._size = 0;
 
         for (const item of data) {
             this.append(item);
@@ -27,7 +27,7 @@ export class SinglyLinkedList<T> {
     }
 
     isEmpty() {
-        return this.size === 0;
+        return this._size === 0;
     }
 
     /**
@@ -36,14 +36,14 @@ export class SinglyLinkedList<T> {
     prepend(value: T) {
         const newNode = new Node(value);
         if (this.isEmpty()) {
-            this.headNode = newNode;
-            this.tailNode = newNode;
+            this._headNode = newNode;
+            this._tailNode = newNode;
         } else {
-            newNode.next = this.headNode;
-            this.headNode = newNode;
+            newNode.next = this._headNode;
+            this._headNode = newNode;
         }
 
-        this.size++;
+        this._size++;
     }
 
     /**
@@ -52,21 +52,21 @@ export class SinglyLinkedList<T> {
     append(value: T) {
         const newNode = new Node(value);
         if (this.isEmpty()) {
-            this.headNode = newNode;
-            this.tailNode = newNode;
+            this._headNode = newNode;
+            this._tailNode = newNode;
         } else {
-            this.tailNode!.next = newNode;
-            this.tailNode = newNode;
+            this._tailNode!.next = newNode;
+            this._tailNode = newNode;
         }
 
-        this.size++;
+        this._size++;
     }
 
     /**
      * Insert a new node at a specific index. nodes of this list are indexed starting from 0.
      */
     insertAt(value: T, index: number) {
-        if (index < 0 || index > this.size)
+        if (index < 0 || index > this._size)
             throw new Error("Index out of bounds");
 
         if (index === 0) {
@@ -74,13 +74,13 @@ export class SinglyLinkedList<T> {
             return;
         }
 
-        if (index === this.size) {
+        if (index === this._size) {
             this.append(value);
             return;
         }
 
         const newNode = new Node(value);
-        let currentNode = this.headNode;
+        let currentNode = this._headNode;
         let previousNode: Node<T> | null = null;
         let currentIndex = 0;
 
@@ -92,7 +92,7 @@ export class SinglyLinkedList<T> {
         // Right now, we're in the exact index we are supposed to insert the new node
         previousNode!.next = newNode;
         newNode.next = currentNode;
-        this.size++;
+        this._size++;
     }
 
     /**
@@ -101,16 +101,16 @@ export class SinglyLinkedList<T> {
     removeFromFront(): T | null {
         if (this.isEmpty()) return null;
 
-        const removedValue = this.headNode!.value;
+        const removedValue = this._headNode!.value;
 
-        if (this.size === 1) {
-            this.headNode = null;
-            this.tailNode = null;
+        if (this._size === 1) {
+            this._headNode = null;
+            this._tailNode = null;
         } else {
-            this.headNode = this.headNode!.next;
+            this._headNode = this._headNode!.next;
         }
 
-        this.size--;
+        this._size--;
         return removedValue;
     }
 
@@ -120,27 +120,27 @@ export class SinglyLinkedList<T> {
     removeFromEnd(): T | null {
         if (this.isEmpty()) return null;
 
-        const removedValue = this.tailNode!.value;
+        const removedValue = this._tailNode!.value;
 
-        if (this.size === 1) {
-            this.headNode = null;
-            this.tailNode = null;
+        if (this._size === 1) {
+            this._headNode = null;
+            this._tailNode = null;
         } else {
-            let current = this.headNode;
-            while (current!.next !== this.tailNode) {
+            let current = this._headNode;
+            while (current!.next !== this._tailNode) {
                 current = current!.next;
             }
             // Right now, the "current" contains the node before the tail node
             current!.next = null;
-            this.tailNode = current;
+            this._tailNode = current;
         }
 
-        this.size--;
+        this._size--;
         return removedValue;
     }
 
     removeAt(index: number): T | null {
-        if (index < 0 || index >= this.size) {
+        if (index < 0 || index >= this._size) {
             throw new Error("Index out of bounds");
         }
 
@@ -148,11 +148,11 @@ export class SinglyLinkedList<T> {
             return this.removeFromFront();
         }
 
-        if (index === this.size - 1) {
+        if (index === this._size - 1) {
             return this.removeFromEnd();
         }
 
-        let current = this.headNode;
+        let current = this._headNode;
         let previous: Node<T> | null = null;
         let currentIndex = 0;
 
@@ -163,7 +163,7 @@ export class SinglyLinkedList<T> {
         }
 
         previous!.next = current!.next;
-        this.size--;
+        this._size--;
         return current!.value;
     }
 
@@ -175,21 +175,21 @@ export class SinglyLinkedList<T> {
             return false;
         }
 
-        if (this.headNode!.value === value) {
+        if (this._headNode!.value === value) {
             this.removeFromFront();
             return true;
         }
 
-        let current = this.headNode;
+        let current = this._headNode;
         let previous: Node<T> | null = null;
 
         while (current !== null) {
             if (current.value === value) {
-                if (current === this.tailNode) {
-                    this.tailNode = previous;
+                if (current === this._tailNode) {
+                    this._tailNode = previous;
                 }
                 previous!.next = current.next;
-                this.size--;
+                this._size--;
                 return true;
             }
             previous = current;
@@ -200,7 +200,7 @@ export class SinglyLinkedList<T> {
     }
 
     contains(value: T): boolean {
-        let current = this.headNode;
+        let current = this._headNode;
 
         while (current !== null) {
             if (current.value === value) {
@@ -216,7 +216,7 @@ export class SinglyLinkedList<T> {
      * Find the index of first occurrence of the value.
      */
     indexOf(value: T): number {
-        let current = this.headNode;
+        let current = this._headNode;
         let index = 0;
 
         while (current !== null) {
@@ -233,12 +233,12 @@ export class SinglyLinkedList<T> {
     /**
      * Get the element at a specific index (without removing it).
      */
-    get(index: number): T | null {
-        if (index < 0 || index >= this.size) {
+    getAtIndex(index: number): T | null {
+        if (index < 0 || index >= this._size) {
             throw new Error("Index out of bounds");
         }
 
-        let current = this.headNode;
+        let current = this._headNode;
         let currentIndex = 0;
 
         while (currentIndex < index) {
@@ -252,12 +252,12 @@ export class SinglyLinkedList<T> {
     /**
      * Updates the value at a specific index. The size of the list doesn't change.
      */
-    set(index: number, value: T): void {
-        if (index < 0 || index >= this.size) {
+    setAtIndex(index: number, value: T): void {
+        if (index < 0 || index >= this._size) {
             throw new Error("Index out of bounds");
         }
 
-        let current = this.headNode;
+        let current = this._headNode;
         let currentIndex = 0;
 
         while (currentIndex < index) {
@@ -269,7 +269,7 @@ export class SinglyLinkedList<T> {
     }
 
     getSize() {
-        return this.size;
+        return this._size;
     }
 
     /**
@@ -277,7 +277,7 @@ export class SinglyLinkedList<T> {
      */
     toArray(): T[] {
         const result: T[] = [];
-        let current = this.headNode;
+        let current = this._headNode;
 
         while (current !== null) {
             result.push(current.value);
@@ -291,7 +291,7 @@ export class SinglyLinkedList<T> {
      *  Mostly used for debugging purposes.
      */
     toString() {
-        let current = this.headNode;
+        let current = this._headNode;
         const values: string[] = [];
 
         while (current !== null) {
@@ -299,28 +299,28 @@ export class SinglyLinkedList<T> {
             current = current.next;
         }
 
-        console.log(values.join(" -> "));
+        return values.join(" --> ");
     }
 
     clear(): void {
-        this.headNode = null;
-        this.tailNode = null;
-        this.size = 0;
+        this._headNode = null;
+        this._tailNode = null;
+        this._size = 0;
     }
 
     /**
      * Reverses the whole list in place.
      */
     reverse() {
-        if (this.size <= 1) {
+        if (this._size <= 1) {
             return;
         }
 
         let previous: Node<T> | null = null;
-        let current = this.headNode;
+        let current = this._headNode;
         let next: Node<T> | null = null;
 
-        this.tailNode = this.headNode;
+        this._tailNode = this._headNode;
 
         while (current !== null) {
             next = current.next;
@@ -329,6 +329,6 @@ export class SinglyLinkedList<T> {
             current = next;
         }
 
-        this.headNode = previous;
+        this._headNode = previous;
     }
 }
