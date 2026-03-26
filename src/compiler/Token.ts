@@ -1,6 +1,6 @@
 import type {TokenType} from "./TokenType.ts";
 
-interface Token {
+export interface Token {
     type: TokenType;
     value: string;
     line: number;

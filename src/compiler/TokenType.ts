@@ -3,7 +3,8 @@ export enum TokenType {
     // Literals
     Number = "Number",
     String = "String",
-    Identifier = "Identifier",
+
+    Identifier = "Identifier", // for example, the name of a variable, function, or class.
 
     // keywords
     Let = "Let",
