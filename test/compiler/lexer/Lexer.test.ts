@@ -23,39 +23,39 @@ test("Tokenizing multi-digit numbers", () => {
     expect(token.column).toBe(1);
 });
 
-// test("should tokenize multiple numbers", () => {
-//     const lexer = new Lexer("42 123");
-//     const token1 = lexer.nextToken();
-//     const token2 = lexer.nextToken();
-//
-//     expect(token1.type).toBe(TokenType.Number);
-//     expect(token1.value).toBe("42");
-//     expect(token1.column).toBe(1);
-//
-//     expect(token2.type).toBe(TokenType.Number);
-//     expect(token2.value).toBe("123");
-//     expect(token2.column).toBe(4);
-// });
+test("Tokenizing multiple numbers", () => {
+    const sut = new Lexer("42 123");
+    const token1 = sut.nextToken();
+    const token2 = sut.nextToken();
 
-// test("should tokenize empty string", () => {
-//     const lexer = new Lexer('""');
-//     const token = lexer.nextToken();
-//
-//     expect(token.type).toBe(TokenType.String);
-//     expect(token.value).toBe("");
-//     expect(token.line).toBe(1);
-//     expect(token.column).toBe(1);
-// });
+    expect(token1.type).toBe(TokenType.Number);
+    expect(token1.value).toBe("42");
+    expect(token1.column).toBe(1);
 
-// test("should tokenize simple string", () => {
-//     const lexer = new Lexer('"hello"');
-//     const token = lexer.nextToken();
-//
-//     expect(token.type).toBe(TokenType.String);
-//     expect(token.value).toBe("hello");
-//     expect(token.line).toBe(1);
-//     expect(token.column).toBe(1);
-// });
+    expect(token2.type).toBe(TokenType.Number);
+    expect(token2.value).toBe("123");
+    expect(token2.column).toBe(4);
+});
+
+test("Tokenizing a string (which happens to be empty)", () => {
+    const sut = new Lexer('""');
+    const token = sut.nextToken();
+
+    expect(token.type).toBe(TokenType.String);
+    expect(token.value).toBe("");
+    expect(token.line).toBe(1);
+    expect(token.column).toBe(1);
+});
+
+test("Tokenizing a simple string", () => {
+    const sut = new Lexer('"hello"');
+    const token = sut.nextToken();
+
+    expect(token.type).toBe(TokenType.String);
+    expect(token.value).toBe("hello");
+    expect(token.line).toBe(1);
+    expect(token.column).toBe(1);
+});
 
 // test("should tokenize string with escaped characters", () => {
 //     const lexer = new Lexer('"hello\\nworld"');
