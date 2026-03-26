@@ -1,7 +1,7 @@
 import {TokenType} from "./TokenType.ts";
 import type {Token} from "./Token.ts";
 
-class Lexer {
+export class Lexer {
 
     private readonly sourceCode: string;
     private currentPosition = 0;
@@ -13,7 +13,7 @@ class Lexer {
     }
 
     private isWhitespace(character: string): boolean {
-        return character === ' ' || character === '\t' || character === '\r';
+        return character === ' ' || character === '\t' || character === '\r' || character === '\n';
     }
 
     private isDigit(character: string) {
@@ -153,6 +153,7 @@ class Lexer {
             };
         }
 
+        // The character containing the next token
         const character = this.sourceCode[this.currentPosition]!;
 
         // Consider the character as a number
