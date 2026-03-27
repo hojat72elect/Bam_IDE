@@ -1,6 +1,7 @@
 import {expect, test} from "bun:test";
 import {Lexer} from "../../../src/compiler/lexer/Lexer.ts";
 import {TokenType} from "../../../src/compiler/lexer/TokenType.ts";
+import type {Token} from "../../../src/compiler/lexer/Token.ts";
 
 test("Tokenizing a single digit number", () => {
     const sut = new Lexer("5");
@@ -245,135 +246,140 @@ test("Tokenize the greater-than-or-equals operator", () => {
     expect(token.value).toBe(">=");
 });
 
-// test("should tokenize open parenthesis", () => {
-//     const lexer = new Lexer("(");
-//     const token = lexer.nextToken();
-//
-//     expect(token.type).toBe(TokenType.OpenParenthesis);
-//     expect(token.value).toBe("(");
-// });
+test("Tokenize the opening parenthesis", () => {
+    const sut = new Lexer("(");
+    const token = sut.nextToken();
 
-// test("should tokenize close parenthesis", () => {
-//     const lexer = new Lexer(")");
-//     const token = lexer.nextToken();
-//
-//     expect(token.type).toBe(TokenType.CloseParenthesis);
-//     expect(token.value).toBe(")");
-// });
+    expect(token.type).toBe(TokenType.OpenParenthesis);
+    expect(token.value).toBe("(");
+});
 
-// test("should tokenize open curly brace", () => {
-//     const lexer = new Lexer("{");
-//     const token = lexer.nextToken();
-//
-//     expect(token.type).toBe(TokenType.OpenCurlyBrace);
-//     expect(token.value).toBe("{");
-// });
+test("Tokenize the closing parenthesis", () => {
+    const sut = new Lexer(")");
+    const token = sut.nextToken();
 
-// test("should tokenize close curly brace", () => {
-//     const lexer = new Lexer("}");
-//     const token = lexer.nextToken();
-//
-//     expect(token.type).toBe(TokenType.CloseCurlyBrace);
-//     expect(token.value).toBe("}");
-// });
+    expect(token.type).toBe(TokenType.CloseParenthesis);
+    expect(token.value).toBe(")");
+});
 
-// test("should tokenize semicolon", () => {
-//     const lexer = new Lexer(";");
-//     const token = lexer.nextToken();
-//
-//     expect(token.type).toBe(TokenType.Semicolon);
-//     expect(token.value).toBe(";");
-// });
+test("Tokenize the opening curly brace", () => {
+    const sut = new Lexer("{");
+    const token = sut.nextToken();
 
-// test("should tokenize comma", () => {
-//     const lexer = new Lexer(",");
-//     const token = lexer.nextToken();
-//
-//     expect(token.type).toBe(TokenType.Comma);
-//     expect(token.value).toBe(",");
-// });
+    expect(token.type).toBe(TokenType.OpenCurlyBrace);
+    expect(token.value).toBe("{");
+});
 
-// test("should skip spaces", () => {
-//     const lexer = new Lexer("   42");
-//     const token = lexer.nextToken();
-//
-//     expect(token.type).toBe(TokenType.Number);
-//     expect(token.value).toBe("42");
-//     expect(token.column).toBe(4);
-// });
+test("Tokenize the closing curly brace", () => {
+    const sut = new Lexer("}");
+    const token = sut.nextToken();
 
-// test("should skip tabs", () => {
-//     const lexer = new Lexer("\t42");
-//     const token = lexer.nextToken();
-//
-//     expect(token.type).toBe(TokenType.Number);
-//     expect(token.value).toBe("42");
-//     expect(token.column).toBe(2);
-// });
+    expect(token.type).toBe(TokenType.CloseCurlyBrace);
+    expect(token.value).toBe("}");
+});
 
-// test("should handle newlines correctly", () => {
-//     const lexer = new Lexer("42\n123");
-//     const token1 = lexer.nextToken();
-//     const token2 = lexer.nextToken();
-//
-//     expect(token1.type).toBe(TokenType.Number);
-//     expect(token1.value).toBe("42");
-//     expect(token1.line).toBe(1);
-//     expect(token1.column).toBe(1);
-//
-//     expect(token2.type).toBe(TokenType.Number);
-//     expect(token2.value).toBe("123");
-//     expect(token2.line).toBe(2);
-//     expect(token2.column).toBe(1);
-// });
+test("Tokenize the semicolon", () => {
+    const sut = new Lexer(";");
+    const token = sut.nextToken();
 
-// test("should handle multiple newlines", () => {
-//     const lexer = new Lexer("42\n\n123");
-//     const token1 = lexer.nextToken();
-//     const token2 = lexer.nextToken();
-//
-//     expect(token1.line).toBe(1);
-//     expect(token2.line).toBe(3);
-// });
+    expect(token.type).toBe(TokenType.Semicolon);
+    expect(token.value).toBe(";");
+});
 
-// test("should return EOF token at end of input", () => {
-//     const lexer = new Lexer("42");
-//     lexer.nextToken(); // Consume the number
-//     const eofToken = lexer.nextToken();
-//
-//     expect(eofToken.type).toBe(TokenType.EOF);
-//     expect(eofToken.value).toBe("");
-// });
+test("Tokenize the comma", () => {
+    const sut = new Lexer(",");
+    const token = sut.nextToken();
 
-// test("should return EOF token for empty input", () => {
-//     const lexer = new Lexer("");
-//     const eofToken = lexer.nextToken();
-//
-//     expect(eofToken.type).toBe(TokenType.EOF);
-//     expect(eofToken.value).toBe("");
-//     expect(eofToken.line).toBe(1);
-//     expect(eofToken.column).toBe(1);
-// });
+    expect(token.type).toBe(TokenType.Comma);
+    expect(token.value).toBe(",");
+});
 
-// test("should tokenize variable declaration", () => {
-//     const lexer = new Lexer("let x = 42;");
-//     const tokens = [];
-//     let token = lexer.nextToken();
-//
-//     while (token.type !== TokenType.EOF) {
-//         tokens.push(token);
-//         token = lexer.nextToken();
-//     }
-//
-//     expect(tokens).toHaveLength(5);
-//     expect(tokens[0]!.type).toBe(TokenType.Let);
-//     expect(tokens[1]!.type).toBe(TokenType.Identifier);
-//     expect(tokens[1]!.value).toBe("x");
-//     expect(tokens[2]!.type).toBe(TokenType.Assign);
-//     expect(tokens[3]!.type).toBe(TokenType.Number);
-//     expect(tokens[3]!.value).toBe("42");
-//     expect(tokens[4]!.type).toBe(TokenType.Semicolon);
-// });
+test("The lexer skips the spaces of the source code", () => {
+    const sut = new Lexer("   42");
+    const token = sut.nextToken();
+
+    expect(token.type).toBe(TokenType.Number);
+    expect(token.value).toBe("42");
+    expect(token.column).toBe(4);
+});
+
+test("The lexer skips tabs of the source code", () => {
+    const sut = new Lexer("\t42");
+    const token = sut.nextToken();
+
+    expect(token.type).toBe(TokenType.Number);
+    expect(token.value).toBe("42");
+    expect(token.column).toBe(2); // the whole \t is considered as 1 column.
+});
+
+test("The lexer should handle newlines correctly", () => {
+    const sut = new Lexer("42\n123");
+    const token1 = sut.nextToken();
+    const token2 = sut.nextToken();
+
+    expect(token1.type).toBe(TokenType.Number);
+    expect(token1.value).toBe("42");
+    expect(token1.line).toBe(1);
+    expect(token1.column).toBe(1);
+
+    expect(token2.type).toBe(TokenType.Number);
+    expect(token2.value).toBe("123");
+    expect(token2.line).toBe(2);
+    expect(token2.column).toBe(1);
+});
+
+test("The lexer should handle multiple newlines", () => {
+    const sut = new Lexer("42\n\n123");
+    const token1 = sut.nextToken();
+    const token2 = sut.nextToken();
+
+    expect(token1.line).toBe(1);
+    expect(token2.line).toBe(3);
+});
+
+test("should return EOF at end of source code", () => {
+    const sut = new Lexer("42");
+    sut.nextToken(); // Consume the number
+    const eofToken = sut.nextToken();
+
+    expect(eofToken.type).toBe(TokenType.EOF);
+    expect(eofToken.value).toBe("");
+});
+
+test("should return EOF token for empty input", () => {
+    const sut = new Lexer("");
+    const eofToken = sut.nextToken();
+
+    expect(eofToken.type).toBe(TokenType.EOF);
+    expect(eofToken.value).toBe("");
+    expect(eofToken.line).toBe(1);
+    expect(eofToken.column).toBe(1);
+});
+
+test("should tokenize variable declaration", () => {
+    const sut = new Lexer("let x = 42;");
+    const tokens: Token[] = [];
+    let token = sut.nextToken();
+
+    while (token.type !== TokenType.EOF) {
+        tokens.push(token);
+        token = sut.nextToken();
+    }
+
+    expect(tokens).toHaveLength(5);
+
+    expect(tokens[0]!.type).toBe(TokenType.Let);
+
+    expect(tokens[1]!.type).toBe(TokenType.Identifier);
+    expect(tokens[1]!.value).toBe("x");
+
+    expect(tokens[2]!.type).toBe(TokenType.Assign);
+
+    expect(tokens[3]!.type).toBe(TokenType.Number);
+    expect(tokens[3]!.value).toBe("42");
+
+    expect(tokens[4]!.type).toBe(TokenType.Semicolon);
+});
 
 // test("should tokenize function declaration", () => {
 //     const lexer = new Lexer("function add(a, b) { return a + b; }");
