@@ -1,13 +1,11 @@
 import {expect, test} from "bun:test";
 import {Lexer} from "../../../src/compiler/lexer/Lexer.ts";
 import {TokenType} from "../../../src/compiler/lexer/TokenType.ts";
-import type {Token} from "../../../src/compiler/lexer/Token.ts";
 
 test("Tokenizing a single digit number", () => {
     const sut = new Lexer("5");
     const token = sut.nextToken();
 
-    console.log(token);
     expect(token.type).toBe(TokenType.Number);
     expect(token.value).toBe("5");
     expect(token.line).toBe(1);
@@ -358,13 +356,7 @@ test("should return EOF token for empty input", () => {
 
 test("should tokenize variable declaration", () => {
     const sut = new Lexer("let x = 42;");
-    const tokens: Token[] = [];
-    let token = sut.nextToken();
-
-    while (token.type !== TokenType.EOF) {
-        tokens.push(token);
-        token = sut.nextToken();
-    }
+    const tokens = sut.tokenize();
 
     expect(tokens).toHaveLength(5);
 
@@ -381,97 +373,162 @@ test("should tokenize variable declaration", () => {
     expect(tokens[4]!.type).toBe(TokenType.Semicolon);
 });
 
-// test("should tokenize function declaration", () => {
-//     const lexer = new Lexer("function add(a, b) { return a + b; }");
-//     const tokens = lexer.tokenize();
-//
-//     expect(tokens).toHaveLength(14);
-//     expect(tokens[0]!.type).toBe(TokenType.Function);
-//     expect(tokens[1]!.type).toBe(TokenType.Identifier);
-//     expect(tokens[1]!.value).toBe("add");
-//     expect(tokens[2]!.type).toBe(TokenType.OpenParenthesis);
-//     expect(tokens[3]!.type).toBe(TokenType.Identifier);
-//     expect(tokens[3]!.value).toBe("a");
-//     expect(tokens[4]!.type).toBe(TokenType.Comma);
-//     expect(tokens[5]!.type).toBe(TokenType.Identifier);
-//     expect(tokens[5]!.value).toBe("b");
-//     expect(tokens[6]!.type).toBe(TokenType.CloseParenthesis);
-//     expect(tokens[7]!.type).toBe(TokenType.OpenCurlyBrace);
-//     expect(tokens[8]!.type).toBe(TokenType.Return);
-//     expect(tokens[9]!.type).toBe(TokenType.Identifier);
-//     expect(tokens[9]!.value).toBe("a");
-//     expect(tokens[10]!.type).toBe(TokenType.Plus);
-//     expect(tokens[11]!.type).toBe(TokenType.Identifier);
-//     expect(tokens[11]!.value).toBe("b");
-//     expect(tokens[12]!.type).toBe(TokenType.Semicolon);
-//     expect(tokens[13]!.type).toBe(TokenType.CloseCurlyBrace);
-// });
+test("should tokenize function declaration", () => {
+    const sut = new Lexer("function add(a, b) { return a + b; }");
+    const tokens = sut.tokenize();
 
-// test("should tokenize if statement", () => {
-//     const lexer = new Lexer("if (x == 5) { return true; }");
-//     const tokens = lexer.tokenize();
-//
-//     expect(tokens[0]!.type).toBe(TokenType.If);
-//     expect(tokens[1]!.type).toBe(TokenType.OpenParenthesis);
-//     expect(tokens[2]!.type).toBe(TokenType.Identifier);
-//     expect(tokens[3]!.type).toBe(TokenType.Equals);
-//     expect(tokens[4]!.type).toBe(TokenType.Number);
-//     expect(tokens[5]!.type).toBe(TokenType.CloseParenthesis);
-//     expect(tokens[6]!.type).toBe(TokenType.OpenCurlyBrace);
-//     expect(tokens[7]!.type).toBe(TokenType.Return);
-//     expect(tokens[8]!.type).toBe(TokenType.Identifier);
-//     expect(tokens[9]!.type).toBe(TokenType.Semicolon);
-//     expect(tokens[10]!.type).toBe(TokenType.CloseCurlyBrace);
-// });
+    expect(tokens).toHaveLength(14);
 
-// test("should throw error for unexpected character", () => {
-//     const lexer = new Lexer("@");
-//
-//     expect(() => lexer.nextToken()).toThrow("Unexpected character: @ at line 1, column 1");
-// });
+    expect(tokens[0]!.type).toBe(TokenType.Function);
 
-// test("should throw error for standalone exclamation mark", () => {
-//     const lexer = new Lexer("!");
-//
-//     expect(() => lexer.nextToken()).toThrow("unexpected character: ! at line 1, column 1");
-// });
+    expect(tokens[1]!.type).toBe(TokenType.Identifier);
+    expect(tokens[1]!.value).toBe("add");
 
-// test("should throw error for unexpected character in expression", () => {
-//     const lexer = new Lexer("let x @ 5;");
-//
-//     // Should work for first few tokens
-//     expect(lexer.nextToken().type).toBe(TokenType.Let);
-//     expect(lexer.nextToken().type).toBe(TokenType.Identifier);
-//
-//     // Should fail on unexpected character
-//     expect(() => lexer.nextToken()).toThrow("Unexpected character: @ at line 1, column 7");
-// });
+    expect(tokens[2]!.type).toBe(TokenType.OpenParenthesis);
 
-// test("should tokenize entire input and return all tokens except EOF", () => {
-//     const lexer = new Lexer("let x = 42;");
-//     const tokens = lexer.tokenize();
-//
-//     expect(tokens).toHaveLength(5);
-//     expect(tokens[tokens.length - 1]!.type).toBe(TokenType.Semicolon);
-// });
+    expect(tokens[3]!.type).toBe(TokenType.Identifier);
+    expect(tokens[3]!.value).toBe("a");
 
-// test("should return empty array for empty input", () => {
-//     const lexer = new Lexer("");
-//     const tokens = lexer.tokenize();
-//
-//     expect(tokens).toHaveLength(0);
-// });
+    expect(tokens[4]!.type).toBe(TokenType.Comma);
 
-// test("should handle multiple lines correctly", () => {
-//     const source = "let x = 5;\nlet y = 10;";
-//     const lexer = new Lexer(source);
-//     const tokens = lexer.tokenize();
-//
-//     expect(tokens).toHaveLength(10);
-//
-//     // Check line numbers
-//     expect(tokens[0]!.line).toBe(1); // let
-//     expect(tokens[4]!.line).toBe(1); // ;
-//     expect(tokens[5]!.line).toBe(2); // let
-//     expect(tokens[9]!.line).toBe(2); // ;
-// });
+    expect(tokens[5]!.type).toBe(TokenType.Identifier);
+    expect(tokens[5]!.value).toBe("b");
+
+    expect(tokens[6]!.type).toBe(TokenType.CloseParenthesis);
+
+    expect(tokens[7]!.type).toBe(TokenType.OpenCurlyBrace);
+
+    expect(tokens[8]!.type).toBe(TokenType.Return);
+
+    expect(tokens[9]!.type).toBe(TokenType.Identifier);
+    expect(tokens[9]!.value).toBe("a");
+
+    expect(tokens[10]!.type).toBe(TokenType.Plus);
+
+    expect(tokens[11]!.type).toBe(TokenType.Identifier);
+    expect(tokens[11]!.value).toBe("b");
+
+    expect(tokens[12]!.type).toBe(TokenType.Semicolon);
+
+    expect(tokens[13]!.type).toBe(TokenType.CloseCurlyBrace);
+});
+
+test("should tokenize if statement", () => {
+    const sut = new Lexer("if (x == 5) { return true; }");
+    const tokens = sut.tokenize();
+
+    expect(tokens).toHaveLength(11);
+
+    expect(tokens[0]!.type).toBe(TokenType.If);
+
+    expect(tokens[1]!.type).toBe(TokenType.OpenParenthesis);
+
+    expect(tokens[2]!.type).toBe(TokenType.Identifier);
+    expect(tokens[2]!.value).toBe('x');
+
+    expect(tokens[3]!.type).toBe(TokenType.Equals);
+
+    expect(tokens[4]!.type).toBe(TokenType.Number);
+    expect(tokens[4]!.value).toBe('5');
+
+    expect(tokens[5]!.type).toBe(TokenType.CloseParenthesis);
+
+    expect(tokens[6]!.type).toBe(TokenType.OpenCurlyBrace);
+
+    expect(tokens[7]!.type).toBe(TokenType.Return);
+
+    expect(tokens[8]!.type).toBe(TokenType.Identifier);// todo : right now we're considering "true" and "false" as identifiers, which is just not right.
+
+    expect(tokens[9]!.type).toBe(TokenType.Semicolon);
+
+    expect(tokens[10]!.type).toBe(TokenType.CloseCurlyBrace);
+});
+
+test("should throw error for unexpected character", () => {
+    const sut = new Lexer("@");
+
+    expect(() => sut.nextToken()).toThrow("Unexpected character: @ at line 1, column 1");
+});
+
+test("should throw error for standalone exclamation mark", () => {
+    const sut = new Lexer("!");
+
+    expect(() => sut.nextToken()).toThrow("unexpected character: ! at line 1, column 1");
+});
+
+test("should throw error for unexpected character in expression", () => {
+    const sut = new Lexer("let x @ 5;");
+
+    // Will work for the first few tokens
+    expect(sut.nextToken().type).toBe(TokenType.Let);
+    expect(sut.nextToken().type).toBe(TokenType.Identifier);
+
+    // Will fail on the unexpected character
+    expect(() => sut.nextToken()).toThrow("Unexpected character: @ at line 1, column 7");
+});
+
+test("should tokenize entire input and return all tokens except EOF", () => {
+    const sut = new Lexer("let x = 42;");
+    const tokens = sut.tokenize();
+
+    expect(tokens).toHaveLength(5);
+    expect(tokens[tokens.length - 1]!.type).toBe(TokenType.Semicolon);
+});
+
+test("should return empty array for empty input", () => {
+    const sut = new Lexer("");
+    const tokens = sut.tokenize();
+
+    expect(tokens).toHaveLength(0);
+});
+
+test("should handle multiple lines correctly", () => {
+    const source = "let x = 5;\nconst y = 10;";
+    const sut = new Lexer(source);
+    const tokens = sut.tokenize();
+
+    expect(tokens).toHaveLength(10);
+
+    expect(tokens[0]!.line).toBe(1);
+    expect(tokens[0]!.type).toBe(TokenType.Let);
+    expect(tokens[0]!.value).toBe("let");
+
+    expect(tokens[1]!.type).toBe(TokenType.Identifier);
+    expect(tokens[1]!.value).toBe('x');
+
+    expect(tokens[2]!.type).toBe(TokenType.Assign);
+    expect(tokens[2]!.value).toBe('=');
+    expect(tokens[2]!.column).toBe(7);
+
+    expect(tokens[3]!.type).toBe(TokenType.Number);
+    expect(tokens[3]!.value).toBe('5');
+
+    expect(tokens[4]!.line).toBe(1);
+    expect(tokens[4]!.type).toBe(TokenType.Semicolon);
+    expect(tokens[4]!.value).toBe(';');
+
+    expect(tokens[5]!.type).toBe(TokenType.Const);
+    expect(tokens[5]!.value).toBe("const");
+    expect(tokens[5]!.line).toBe(2);
+    expect(tokens[5]!.column).toBe(1);
+
+    expect(tokens[6]!.type).toBe(TokenType.Identifier);
+    expect(tokens[6]!.line).toBe(2);
+    expect(tokens[6]!.column).toBe(7);
+    expect(tokens[6]!.value).toBe("y");
+
+    expect(tokens[7]!.type).toBe(TokenType.Assign);
+    expect(tokens[7]!.value).toBe('=');
+    expect(tokens[7]!.line).toBe(2);
+    expect(tokens[7]!.column).toBe(9);
+
+    expect(tokens[8]!.type).toBe(TokenType.Number);
+    expect(tokens[8]!.value).toBe("10");
+    expect(tokens[8]!.line).toBe(2);
+    expect(tokens[8]!.column).toBe(11);
+
+    expect(tokens[9]!.type).toBe(TokenType.Semicolon);
+    expect(tokens[9]!.value).toBe(";");
+    expect(tokens[9]!.line).toBe(2);
+    expect(tokens[9]!.column).toBe(13);
+});

@@ -256,6 +256,9 @@ export class Lexer {
         }
     }
 
+    /**
+     * Just goes through the whole source code and converts all of it to an array of Tokens.
+     */
     tokenize(): Token[] {
         const tokens: Token[] = [];
         let token = this.nextToken();
