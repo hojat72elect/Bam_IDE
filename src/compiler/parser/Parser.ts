@@ -8,11 +8,11 @@ import type {FunctionDeclaration} from "./FunctionDeclaration.ts";
 import type {ReturnStatement} from "./ReturnStatement.ts";
 import type {ExpressionStatement} from "./ExpressionStatement.ts";
 
-class Parser {
+export class Parser {
     private readonly tokens: Token[];
     private currentPosition: number = 0;
 
-    constructor(tokens: Token[]) {
+    constructor(tokens: Token[] = []) {
         this.tokens = tokens;
     }
 
